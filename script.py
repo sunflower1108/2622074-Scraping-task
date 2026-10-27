@@ -14,6 +14,10 @@ sitemap = {}
 visited = set()
 queue = [url]
 
+with open("sitemap.csv", "w", encoding="utf-8-sig", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["URL", "Title"])
+
 while queue:
     current_url = queue.pop(0)
     if current_url in visited:
@@ -37,6 +41,10 @@ while queue:
         sitemap[current_url] = title_text
         print(f"取得成功: {current_url} -> {title_text}")
 
+        with open("sitemap.csv", "a", encoding="utf-8-sig", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow([current_url, title_text])
+
         a_list = html_soup.find_all("a")
 
         for a in a_list:
@@ -56,11 +64,5 @@ while queue:
 
     except Exception as e:
         print(f"エラー発生 ({current_url}): {e}")
-
-with open("sitemap.csv", "w", encoding="utf-8-sig", newline="") as f:
-    writer = csv.writer(f)
-    writer.writerow(["URL", "Title"])
-    for u, t in sitemap.items():
-        writer.writerow([u, t])
 
 print(f"完了！{len(sitemap)}件のデータをsitemap.csvに保存しました。")
